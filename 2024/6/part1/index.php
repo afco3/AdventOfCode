@@ -61,4 +61,4 @@ while($isIn) {
     }
 }
 
-echo count($openedCase);
+echo count($openedCase)+1;
