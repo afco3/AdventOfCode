@@ -24,14 +24,14 @@ foreach ($content as $line) {
         for ($j = $i; $j < count($operators); $j++) {
             $tmpOperators = $operators;
             $tmpOperators[$j] = '*';
-            // dump($tmpOperators);
 
-            $calc = "";
+            $calc = str_repeat("(", count($values));
             for ($k = 0; $k < count($values); $k++) {
-                $calc .= $values[$k].($tmpOperators[$k] ?? "");
+                $calc .= $values[$k].")".($tmpOperators[$k] ?? "");
             }
 
             $count = eval("return ".$calc.";");
+
 
             if ($count == $result) {
                 $total += $count;
@@ -45,3 +45,9 @@ foreach ($content as $line) {
 }
 
 echo $total;
+
+
+
+// 'return 36+5+3+9+8+8*4+4+184+770
+// ;'
+// 1051
