@@ -13,41 +13,33 @@ foreach ($content as $line) {
 
     $operators = array_fill(0, count($values)-1, '+');
 
-    $count = array_sum($values);
-    
-    if ($count == $result) {
-        $total += $count;
-        continue;
-    }
+    $numOp = 0;
+    while (true) {
+        $bin = decbin($numOp);
+        if (strlen($bin) > count($values)-1) break;
 
-    for ($i = 0; $i < count($operators); $i++) {
-        for ($j = $i; $j < count($operators); $j++) {
-            $tmpOperators = $operators;
-            $tmpOperators[$j] = '*';
+        $bin = str_pad($bin, count($values)-1, "0", STR_PAD_LEFT);
 
-            $calc = str_repeat("(", count($values));
-            for ($k = 0; $k < count($values); $k++) {
-                $calc .= $values[$k].")".($tmpOperators[$k] ?? "");
-            }
+        $operators = str_replace(["0", "1"], ["+", "*"], $bin);
+        $operators = str_split($operators);
 
-            $count = eval("return ".$calc.";");
-
-
-            if ($count == $result) {
-                $total += $count;
-                continue 3;
-            }
+        $calc = str_repeat("(", count($values));
+        for ($k = 0; $k < count($values); $k++) {
+            $calc .= $values[$k].")".($operators[$k] ?? "");
         }
 
-        $operators[$i] = '*';
+        $count = eval("return ".$calc.";");
+
+
+        if ($count == $result) {
+            $total += $count;
+            break;
+        }
+
+
+        $numOp++;
     }
 
 }
 
 echo $total;
-
-
-
-// 'return 36+5+3+9+8+8*4+4+184+770
-// ;'
-// 1051
