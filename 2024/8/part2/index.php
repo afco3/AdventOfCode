@@ -22,6 +22,10 @@ foreach ($content as $x => $c) {
 $maxX = count($content)-1;
 $maxY = count($content[0])-1;
 
+// $antennasTypes = array_slice($antennasTypes, 0, 2);
+
+// dump($antennasTypes);
+
 $antinodes = [];
 
 foreach ($antennasTypes as $type => $antennas) {
@@ -34,23 +38,20 @@ foreach ($antennasTypes as $type => $antennas) {
             $tmpX = $tmpAntenna[0];
             $tmpY = $tmpAntenna[1];
 
-            $dx = abs($x-$tmpX);
-            $dy = abs($y-$tmpY);
-            
-            $potentialX = [];
-            $potentialY = [];
+            $dx = $tmpX-$x;
+            $dy = $tmpY-$y;
 
-            for ($i = $maxX*-1; $i < $maxX; $i++) {
-                $newX = $x+($dx*$i);
-                if ($newX < 0 || $newX > $maxX || $newX == $tmpX) continue;
+            $newX = $x;
+            $newY = $y;
+
+            while (true) {
+                $newX = $newX+$dx;
+                $newY = $newY+$dy;
+                if ($newX > $maxX || $newY > $maxY || $newX < 0 || $newY < 0) break;
                 
-                $newY = $y+($dy*$i);
-                if ($newY < 0 || $newY > $maxY || $newY == $tmpY) continue;
-                
-                $antinodes[$newX.$newY] = "";
+                $antinodes[$newX.' '.$newY] = "";
                 $content[$newX][$newY] = "#";
             }
-
 
         }
     }
@@ -60,6 +61,6 @@ foreach ($content as $x => $c) {
     $content[$x] = implode($c);
 }
 
-dd($content);
+dump($content);
 
 echo count($antinodes);
