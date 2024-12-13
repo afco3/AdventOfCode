@@ -6,23 +6,20 @@ $content = file_get_contents("./input.txt");
 
 // dd($content);
 
-$partition = "";
+$partition = [];
 
 $id = 0;
 $emptyPlace = false;
 foreach (str_split($content) as $num) {
     if ($emptyPlace) {
-        $partition .= str_repeat(".", (int) $num);
+        $partition = array_merge($partition, array_fill(0, (int) $num, "."));
     } else {
-        $partition .= str_repeat($id, (int) $num);
+        $partition = array_merge($partition, array_fill(0, (int) $num, $id));
         $id ++;
     }
 
-    if ($id > 9) $id = 0;
     $emptyPlace = !$emptyPlace;
 }
-
-$partition = str_split($partition);
 
 while (isset(array_count_values($partition)['.'])) {
     dump(array_count_values($partition)['.']);
