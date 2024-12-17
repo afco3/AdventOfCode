@@ -22,44 +22,72 @@ foreach ($content as $k => $v) {
     }
 }
 
+$hasDeadEnd = true;
+while ($hasDeadEnd) {
+    $hasDeadEnd = false;
+    foreach ($content as $x => $c) {
+        foreach ($c as $y => $v) {
+            if (in_array($v, ["#", "S", "E"])) continue;
+            $hcount = substr_count($content[$x-1][$y].$content[$x+1][$y].$content[$x][$y+1].$content[$x][$y-1], '#');
+
+            if ($hcount >= 3) {
+                $content[$x][$y] = '#';
+                $hasDeadEnd = true;
+            }
+        }
+    }
+}
+
 $lines = [];
 
-displayContent($content);
+// displayContent($content);
 // dd('');
 
-$i = 0;
+// $i = 0;
 
 walk($start['x'], $start['y'], 'left', 0, $content, $start['x'] .'-'. $start['y']);
 
 function walk($x, $y, $dir, $cost, $content, $line) {
     global $lines, $i;
-    dump($i);
+    // dump($i);
+
+    // dump($x .' '. $y);
+
+    // if ($i > 50000000) {
+    //     displayContent($content);
+    //     exit;
+    // }
+    if (($i % 10000000) == 0) {
+        displayContent($content);
+    }
+
     $i++;
 
     if ($content[$x][$y] == 'E') {
         displayContent($content);
         dump(count($lines));
+        dd($lines);
         $lines[$line.'_'.$x.'-'.$y] = $cost;
         return $cost;
     }
 
-    $content[$x][$y] = 'x';
+    $content[$x][$y] = '<span style="color:red">x</span>';
 
     $possibility = [];
 
-    if ($content[$x-1][$y] != '#' && $content[$x-1][$y] != 'x') {
+    if ($content[$x-1][$y] != '#' && $content[$x-1][$y] != '<span style="color:red">x</span>') {
         $possibility['up']['x'] = $x-1;
         $possibility['up']['y'] = $y;
     }
-    if ($content[$x+1][$y] != '#' && $content[$x+1][$y] != 'x') {
+    if ($content[$x+1][$y] != '#' && $content[$x+1][$y] != '<span style="color:red">x</span>') {
         $possibility['down']['x'] = $x+1;
         $possibility['down']['y'] = $y;
     }
-    if ($content[$x][$y+1] != '#' && $content[$x][$y+1] != 'x') {
+    if ($content[$x][$y+1] != '#' && $content[$x][$y+1] != '<span style="color:red">x</span>') {
         $possibility['right']['x'] = $x;
         $possibility['right']['y'] = $y+1;
     }
-    if ($content[$x][$y-1] != '#' && $content[$x][$y-1] != 'x') {
+    if ($content[$x][$y-1] != '#' && $content[$x][$y-1] != '<span style="color:red">x</span>') {
         $possibility['left']['x'] = $x;
         $possibility['left']['y'] = $y-1;
     }
