@@ -1,5 +1,5 @@
 <?php
-set_time_limit(3600);
+set_time_limit(3600*24);
 include "../../../includes/debug.php";
 
 $content = file_get_contents("./input.txt");
@@ -45,10 +45,16 @@ $lines = [];
 
 // $i = 0;
 
+$maxCost = 50000000; // 115476
+
+// 386
+
+// 115476
+
 walk($start['x'], $start['y'], 'left', 0, $content, $start['x'] .'-'. $start['y']);
 
 function walk($x, $y, $dir, $cost, $content, $line) {
-    global $lines, $i;
+    global $lines, $maxCost;
     // dump($i);
 
     // dump($x .' '. $y);
@@ -57,18 +63,26 @@ function walk($x, $y, $dir, $cost, $content, $line) {
     //     displayContent($content);
     //     exit;
     // }
-    if (($i % 10000000) == 0) {
-        displayContent($content);
-    }
+    // if (($i % 500000000) == 0) {
+    //     displayContent($content);
+    // }
 
-    $i++;
+    // $i++;
+
+    if ($cost > $maxCost) return ;
 
     if ($content[$x][$y] == 'E') {
+        $lines[$line.'_'.$x.'-'.$y] = $cost;
         displayContent($content);
         dump(count($lines));
-        dd($lines);
-        $lines[$line.'_'.$x.'-'.$y] = $cost;
-        return $cost;
+        // dd($lines);
+        $tmpLines = $lines;
+        sort($tmpLines);
+        $maxCost = $tmpLines[0];
+        dump($maxCost);
+        // dd($lines);
+
+        return ;
     }
 
     $content[$x][$y] = '<span style="color:red">x</span>';
@@ -79,13 +93,13 @@ function walk($x, $y, $dir, $cost, $content, $line) {
         $possibility['up']['x'] = $x-1;
         $possibility['up']['y'] = $y;
     }
-    if ($content[$x+1][$y] != '#' && $content[$x+1][$y] != '<span style="color:red">x</span>') {
-        $possibility['down']['x'] = $x+1;
-        $possibility['down']['y'] = $y;
-    }
     if ($content[$x][$y+1] != '#' && $content[$x][$y+1] != '<span style="color:red">x</span>') {
         $possibility['right']['x'] = $x;
         $possibility['right']['y'] = $y+1;
+    }
+    if ($content[$x+1][$y] != '#' && $content[$x+1][$y] != '<span style="color:red">x</span>') {
+        $possibility['down']['x'] = $x+1;
+        $possibility['down']['y'] = $y;
     }
     if ($content[$x][$y-1] != '#' && $content[$x][$y-1] != '<span style="color:red">x</span>') {
         $possibility['left']['x'] = $x;
@@ -96,7 +110,7 @@ function walk($x, $y, $dir, $cost, $content, $line) {
         walk($pos['x'], $pos['y'], $key, ($key != $dir ? 1001 : 1) + $cost, $content, $line.'_'.$x.'-'.$y);
     }
 
-    return $cost;
+    return ;
 }
 
 sort($lines);
