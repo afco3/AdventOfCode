@@ -47,11 +47,7 @@ $lines = [];
 
 $maxCost = 50000000; // 115476
 
-// 386
-
-// 115476
-
-walk($start['x'], $start['y'], 'left', 0, $content, $start['x'] .'-'. $start['y']);
+walk($start['x'], $start['y'], 'right', 0, $content, $start['x'] .'-'. $start['y']);
 
 function walk($x, $y, $dir, $cost, $content, $line) {
     global $lines, $maxCost;
