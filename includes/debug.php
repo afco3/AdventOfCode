@@ -22,3 +22,11 @@ function dd($data) {
     else echo '<pre>' . $data . '</pre>';
     exit;
 }
+
+function display($a) {
+    foreach ($a as $k => $v) {
+        if (is_array($v)) $content[$k] = implode('', $v);
+    }
+
+    dump(implode("\n", $content));
+}
