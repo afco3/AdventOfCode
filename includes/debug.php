@@ -23,18 +23,9 @@ function dd($data) {
     exit;
 }
 
-function display($content, $reverse=false) {
-    $tmp = [];
-    foreach ($content as $y => $a) {
-        foreach ($a as $x => $v) {
-            $tmp[$x][$y] = $v;
-        }
-    }
-    
-    $content = $tmp;
-
-    foreach ($content as $k => $v) {
-        $content[$k] = implode('', $v);
+function display($a) {
+    foreach ($a as $k => $v) {
+        if (is_array($v)) $content[$k] = implode('', $v);
     }
 
     dump(implode("\n", $content));

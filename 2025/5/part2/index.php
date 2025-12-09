@@ -3,63 +3,38 @@ include "../../../includes/debug.php";
 
 $content = file_get_contents("./input.txt");
 
+$content = explode("\n\n", $content)[0];
 $ranges = explode("\n", $content);
 
-$count = 0;
-for ($i = 0; $i < count($ranges); $i++) {
-    if (! isset($ranges[$i])) continue;
-
-    $range = $ranges[$i];
-    [$start, $end] = explode('-', $range);
-
-    $d = $i == 3;
-
-    // if ($d) dump($range);
-    // if ($d) dump("<br>");
-
-    for ($j = 0; $j < $i; $j++) {
-        if (! isset($ranges[$j])) continue;
-
-        $r = $ranges[$j];
-        [$s, $e] = explode('-', $r);
-        // if ($d) dump("<br>");
-
-        // if ($d) dump($r);
-        // if ($d) dump($start);
-        // if ($d) dump($end);
-        // if ($d) dump($s);
-        // if ($d) dump($e);
-        // if ($d) dump("<br>");
-
-        if ($s >= $start && $s <= $end && $e >= $start && $e <= $end) {
-            // if ($d) dump("1");
-            $count -= ($e-$s)+1;
-            unset($ranges[$j]);
-        } else if ($start >= $s && $start <= $e && $end >= $s && $end <= $e) {
-            // if ($d) dump("2");
-            unset($ranges[$i]);
-            continue 2;
-        } else if ($s >= $start && $s <= $end) {
-            // if ($d) dump("3");
-            $end = $s-1;
-            $ranges[$i] = $start . '-' . $end;
-            // if ($d) dump($ranges[$i]);
-        } else if ($e >= $start && $e <= $end) {
-            // if ($d) dump("4");
-            $start = $e+1;
-            $ranges[$i] = $start. '-' . $end;
-            // if ($d) dump($ranges[$i]);
-        }
-        // if ($d) dump("<br>");
-        // if ($d) dump("<br>");
-    }
-
-    $count += ($end-$start)+1;
+foreach ($ranges as $key => $range) {
+    $ranges[$key] = explode('-', $range);
 }
 
-// dump("<br>");
-// dump("<br>");
-// dump("<br>");
-// dump($ranges);
+usort($ranges, function ($a, $b) {
+    return $a[0] > $b[0];
+});
+
+$tmp = [array_shift($ranges)];
+
+foreach ($ranges as $range) {
+    $lastTmpRangeKey = count($tmp)-1;
+    $lastTmpRange = $tmp[$lastTmpRangeKey];
+
+    if ($range[0] > $lastTmpRange[1]) {
+        $tmp[] = $range;
+        continue;
+    }
+
+    if ($range[1] > $lastTmpRange[1]) {
+        $tmp[$lastTmpRangeKey][1] = $range[1];
+    }
+}
+
+$ranges = $tmp;
+
+$count = 0;
+foreach ($ranges as $range) {
+    $count += ($range[1]-$range[0])+1;
+}
 
 dd($count);
